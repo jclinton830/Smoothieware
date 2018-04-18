@@ -31,7 +31,7 @@ class TemperatureControl : public Module {
         void set_desired_temperature(float desired_temperature);
 
         float get_temperature();
-
+        float get_target_temperature();
 
         friend class PID_Autotuner;
 
@@ -60,9 +60,8 @@ class TemperatureControl : public Module {
 
         std::string designator;
 
-
         float hysteresis;
-        float iTerm;
+        float iTerm;``
         float lastInput;
         // PID settings
         float p_factor;

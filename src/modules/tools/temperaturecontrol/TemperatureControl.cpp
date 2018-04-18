@@ -497,20 +497,40 @@ void TemperatureControl::pid_process(float temperature)
     if(use_bangbang) {
         // bang bang is very simple, if temp is < target - hysteresis turn on full else if  temp is > target + hysteresis turn heater off
         // good for relays
-        if(temperature > (target_temperature + hysteresis) && this->o > 0) {
-            heater_pin.set(false);
-            this->o = 0; // for display purposes only
+        if(target_temperature => 22){
+          if(temperature > (target_temperature + hysteresis) && this->o > 0) {
+              heater_pin.set(false);
+              this->o = 0; // for display purposes only
 
-        } else if(temperature < (target_temperature - hysteresis) && this->o <= 0) {
-            if(heater_pin.max_pwm() >= 255) {
-                // turn on full
-                this->heater_pin.set(true);
-                this->o = 255; // for display purposes only
-            } else {
-                // only to whatever max pwm is configured
-                this->heater_pin.pwm(heater_pin.max_pwm());
-                this->o = heater_pin.max_pwm(); // for display purposes only
-            }
+          } else if(temperature < (target_temperature - hysteresis) && this->o <= 0) {
+              if(heater_pin.max_pwm() >= 255) {
+                  // turn on full
+                  this->heater_pin.set(true);
+                  this->o = 255; // for display purposes only
+              } else {
+                  // only to whatever max pwm is configured
+                  this->heater_pin.pwm(heater_pin.max_pwm());
+                  this->o = heater_pin.max_pwm(); // for display purposes only
+              }
+          }
+        }
+
+        if(target_temperature < 22){
+          if(temperature < (target_temperature - hysteresis) && this->o > 0) {
+              heater_pin.set(false);
+              this->o = 0; // for display purposes only
+
+          } else if(temperature > (target_temperature + hysteresis) && this->o <= 0) {
+              if(heater_pin.max_pwm() >= 255) {
+                  // turn on full
+                  this->heater_pin.set(true);
+                  this->o = 255; // for display purposes only
+              } else {
+                  // only to whatever max pwm is configured
+                  this->heater_pin.pwm(heater_pin.max_pwm());
+                  this->o = heater_pin.max_pwm(); // for display purposes only
+              }
+          }
         }
         return;
     }
@@ -627,4 +647,9 @@ void TemperatureControl::setPIDi(float i)
 void TemperatureControl::setPIDd(float d)
 {
     this->d_factor = d / this->PIDdt;
+}
+
+float TemperatureControl::get_target_temperature()
+{
+  return target_temperature;
 }
